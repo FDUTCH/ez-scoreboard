@@ -46,6 +46,7 @@ type Updater struct {
 
 // Update updates scoreboard for the player.
 func (s Updater) Update(p *player.Player) {
+	t := s.val.Type()
 	sc := scoreboard.New(s.name...)
 	spaceIndex := 0
 
@@ -61,10 +62,14 @@ func (s Updater) Update(p *player.Player) {
 			spaceIndex++
 		case DynamicLine:
 			str = val(p)
-		case StaticLine, string:
+		case StaticLine:
 			str = fmt.Sprint(val)
 		default:
-			panic(fmt.Errorf("unknown type: %T", val))
+			formating := t.Field(i).Tag.Get("scoreboard")
+			if formating == "" {
+				panic(fmt.Errorf("unknown type: %T", val))
+			}
+			str = fmt.Sprintf(formating, val)
 		}
 		// I know that an empty string won't be displayed on the client side anyway, but I just want this check to be here.
 		if str != "" {
