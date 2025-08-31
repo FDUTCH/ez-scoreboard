@@ -30,6 +30,9 @@ func BuildUpdater(v any, name ...any) (Updater, error) {
 // Space represents empty line in scoreboard.
 type Space struct{}
 
+// RemovePadding removes padding from the scoreboard.
+type RemovePadding struct{}
+
 // DynamicLine is a dynamic line in the scoreboard.
 // Each time Update() is called, DynamicLine will also be called.
 // If an empty string is returned, the string will not be displayed on the player's side.
@@ -60,6 +63,8 @@ func (s Updater) Update(p *player.Player) {
 		case Space:
 			str = fmt.Sprintf("§%d", spaceIndex%10) + strings.Repeat(" ", spaceIndex)
 			spaceIndex++
+		case RemovePadding:
+			sc.RemovePadding()
 		case DynamicLine:
 			str = val(p)
 		case StaticLine:
